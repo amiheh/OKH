@@ -107,9 +107,8 @@ for (total_coursee in 1:number_course) {
 }
 timetableMatrix<-timetableMatrix[, colSums(timetableMatrix != 0) > 0]
 
-View(course_tt);
-print(nrow(timetableMatrix));
-print(penalty(conflictMatrix, course_tt, number_student))
+cat("Jumlah timetable: ", nrow(timetableMatrix));
+cat("Penalty: ", penalty(conflictMatrix, course_tt, number_student));
 
 nama_file_output = paste(data_name[as.integer(pilihan), 2], '.sol', sep="");
 write.table(course_tt, file=nama_file_output, row.names=FALSE, col.names=FALSE)
