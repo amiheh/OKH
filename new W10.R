@@ -1,4 +1,4 @@
-load("penalty.R");
+source("penalty.R");
 
 data_name = matrix(c("car-s-91", "Carleton91", 
                      "car-f-92", "Carleton92", 
