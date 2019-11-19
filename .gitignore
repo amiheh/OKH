@@ -34,3 +34,16 @@ vignettes/*.pdf
 # Temporary files created by R markdown
 *.utf8.md
 *.knit.md
+
+*.sol
+*.crs
+*.stu
+*.exm
+*.res
+*Rproj
+*.exe
+ReadMe.txt
+W10.R
+W10 edit.R
+run otomatis.R
+okh.R

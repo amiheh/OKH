@@ -1,3 +1,5 @@
+load("penalty.R");
+
 data_name = matrix(c("car-s-91", "Carleton91", 
                      "car-f-92", "Carleton92", 
                      "ear-f-83", "EarlHaig83", 
@@ -11,7 +13,6 @@ data_name = matrix(c("car-s-91", "Carleton91",
                      "uta-s-92", "TorontoAS92", 
                      "ute-s-92", "TorontoE92", 
                      "yor-f-83", "YorkMills83"), ncol=2, byrow=TRUE)
-
 
 for (dat in 1:nrow(data_name)) {
   if (dat == 1) {
@@ -116,4 +117,3 @@ end_time <- Sys.time()
 
 time <- end_time - start_time;
 print(time)
-
