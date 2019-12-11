@@ -199,14 +199,48 @@ public class TimeTable1 {
            
             
             Arrays.sort(sdegrees, new Comparator<int[]>() { 
-        @Override
-        public int compare(int[] entry1, int[] entry2) { 
-                    if (entry1[1] < entry2[1]) 
-                        return 1; 
-                    else
-                        return -1; 
-                  } 
+                @Override
+                public int compare(int[] entry1, int[] entry2) { 
+                            if (entry1[1] < entry2[1]) 
+                                return 1; 
+                            else
+                                return -1; 
+                          } 
                 });
+
+
+            //iseng bikin saturation degree
+            int[][]smatrix = new int[course.size()][2];   
+            for(int i=0;i<smatrix.length;i++){
+                smatrix[i][0]=i+1;
+            } 
+            int fpexam = sdegrees[0][0];
+            smatrix[fpexam][1] = 0;
+            int tsnum = 1;
+
+            int[][]temp_timetable = new int[][];
+            temp_timetable[0][0] = fpexam;
+
+            //loop utk sisa exam
+            for (int i=1; i<smatrix.length; i++) {
+                int the_exam = sdegrees[i][0];
+
+                boolean satur = true;
+
+                //loop utk semua isi jadwal
+                for (int j = 0; j<temp_timetable.length; j++) {
+                    for (int k = 0; k<temp_timetable.length[j]; k++) {
+                        if (conflict_matrix[the_exam][temp_timetable[j][k]] != 0) {
+                            satur = false;
+                        }
+                    }
+                }
+
+                if (satur) {
+                    tsnum++
+                }
+
+            };
 
             //timesloting            
             
@@ -250,6 +284,10 @@ public class TimeTable1 {
 //                    slot[i]=timeslot[i][1];
                 }
             }
+
+            int [][] timeslot2 = new int[course.size()][2];
+            timeslot2 = timeslot;
+            double bestHill = hillclimbing(conflict_matrix, timeslot2, student.size(), course.size(), max_timeslot);
             
             /////////////////
             //inisiasi random
@@ -271,13 +309,13 @@ public class TimeTable1 {
             tabulist.addLast(timeslot.clone());
             
             //inisiasi iterasi
-            int maxiteration = 10000;
+            int maxiteration = 1000;
             int iteration=0;
             
             //inisiasi sesuatu
             ArrayList<int[][]> sbest_array = new ArrayList<>();
             Double[] sbest_penalty = new Double[maxiteration];
-            int[][]dabest = timeslot.clone();
+            int[][] smallest = timeslot.clone();
 
             //inisasi itung penalty
             double penalty1 = 0;
@@ -403,20 +441,19 @@ public class TimeTable1 {
             for(int i = 0; i < maxiteration; i++) {
                 if (minPenalty > sbest_penalty[i]) {
                     minPenalty = sbest_penalty[i];
-                    dabest = sbest_array.get(i);
+                    smallest = sbest_array.get(i);
                 }
             }
             
-            //penalty3 = penalty(conflict_matrix, dabest, student.size());
-            
-            //hillclimbing(conflict_matrix, timeslot, student.size(), course.size(), max_timeslot);
+            //penalty3 = penalty(conflict_matrix, smallest, student.size());
             
             System.out.println("waktu eksekusi : " + (double)totaltimer/1000000000 + " detik");
             
             System.out.println("penalty initial solution: "+penalty);
+            System.out.println("penalty terbaik dari hill climbing: "+ bestHill);
             System.out.println("penalty terbaik dari tabu search: "+ minPenalty);
             
-            export(dabest,filename);
+            export(smallest,filename);
 
             double delta = 0;
             delta = ((penalty-penalty2)/penalty2)*100;
@@ -458,7 +495,7 @@ public class TimeTable1 {
         return true;
     }
     
-    public static void hillclimbing (int conf[][], int[][]timeslot, int stu, int cour, int max){
+    public static double hillclimbing (int conf[][], int[][]timeslot, int stu, int cour, int max){
     Random r = new Random();
         int randomindexcourse=0;
         int randomslot=0;
@@ -466,7 +503,8 @@ public class TimeTable1 {
         int newtimeslot[][]=timeslot.clone();
         double penalty1 = penalty(conf, newtimeslot, stu);
         double penalty2 = 0;
-        for (int i = 0; i < 1000000; i++) {
+        double bestHill = 0;
+        for (int i = 0; i < 1000; i++) {
             randomindexcourse=r.nextInt(cour);
             randomslot=r.nextInt(max);
 
@@ -481,7 +519,9 @@ public class TimeTable1 {
                 }
             }
             System.out.println("iterasi "+(i+1)+" penalty "+ penalty(conf, timeslottemp, stu));
+            bestHill = penalty(conf, timeslottemp, stu);
         }
+        return bestHill;
     }
     
     public static void export(int[][]timeslot, String filename){
